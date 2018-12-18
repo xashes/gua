@@ -16,3 +16,41 @@
    '(0 0 0) (hash 'name '坤 'xiang '地 'pre-num 8 'post-num 2 'pre-pos 'north 'post-pos 'south-west)
    '(1 1 0) (hash 'name '兑 'xiang '泽 'pre-num 2 'post-num 7 'pre-pos 'south-east 'post-pos 'west)
    ))
+
+(define xing
+  (hash
+   'jin (hash 'name '金
+              'sheng 'shui
+              'ke 'mu
+              'pos 'west
+              'tiangan '(庚 辛))
+   'mu (hash 'name '木
+              'sheng 'huo
+              'ke 'tu
+              'pos 'east
+              'tiangan '(甲 乙))
+   'shui (hash 'name '水
+              'sheng 'mu
+              'ke 'huo
+              'pos 'north
+              'tiangan '(壬 癸))
+   'huo (hash 'name '火
+              'sheng 'tu
+              'ke 'jin
+              'pos 'south
+              'tiangan '(丙 丁))
+   'tu (hash 'name '土
+              'sheng 'jin
+              'ke 'shui
+              'pos 'center
+              'tiangan '(戊 己))
+   ))
+
+(define tiangan
+  '(甲 乙 丙 丁 戊 己 庚 辛 壬 癸))
+
+(define dizhi
+  '(子 丑 寅 卯 辰 巳 午 未 申 酉 戌 亥))
+
+(define 纳甲
+  '())
