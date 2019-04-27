@@ -13,6 +13,7 @@
   [jiao-gua (-> gua64? gua8?)]
   [hu-gua (-> gua64? gua8?)]
   [jiaohu-gua (-> gua64? gua64?)]
+  [zhi-gua (->* (gua?) () #:rest yao-posns? gua?)]
   ))
 ;; end of interface
 
@@ -36,6 +37,14 @@
 (define (gua? lst)
   (or gua8? gua64?))
 
+(define (yao-posn? i)
+  (and (>= i 1)
+       (<= i 6)))
+
+;; TODO check for no duplications
+(define (yao-posns? lst)
+  (andmap yao-posn? lst))
+
 (define (yao-bian yao)
   (if (zero? yao) 1 0))
 
@@ -58,6 +67,13 @@
 (define (jiaohu-gua gua)
   (append (hu-gua gua) (jiao-gua gua)))
 
+(define (zhi-gua gua . yaos)
+  (for/list ([yao (in-list gua)]
+             [idx (in-range 1 7)])
+    (if (member idx yaos)
+        (yao-bian yao)
+        yao)))
+
 
 (module+ test
 
@@ -75,6 +91,10 @@
                 '(1 1 0 1 0 0))
   (check-equal? (jiaohu-gua '(0 0 0 1 1 1))
                 '(0 0 1 0 1 1))
+  (check-equal? (zhi-gua '(0 0 0 1 1 1) 3)
+                '(0 0 1 1 1 1))
+  (check-equal? (zhi-gua '(0 0 0 1 1 1) 3 5 6)
+                '(0 0 1 1 0 0))
 
   (check-true (yao? 1))
   (check-true (yao? 0))
@@ -86,5 +106,6 @@
 
   (check-true (gua64? '(1 1 1 0 0 1)))
   (check-false (gua64? '(1 1 1 0 0 6)))
+
 
   )
