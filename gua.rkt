@@ -3,6 +3,10 @@
 ;; interface
 (provide
  (contract-out
+  [yao? (-> integer? boolean?)]
+  [gua? (-> (listof integer?) boolean?)]
+  [gua8? (-> (listof integer?) boolean?)]
+  [gua64? (-> (listof integer?) boolean?)]
   [yao-bian (-> yao? yao?)]
   [zong-gua (-> gua? gua?)]
   [cuo-gua (-> gua? gua?)]
@@ -17,7 +21,7 @@
 ;; yao ::= 0 | 1
 
 (define (yao? i)
-  (and (number? i)
+  (and (integer? i)
        (or (zero? i)
            (= i 1))))
 
