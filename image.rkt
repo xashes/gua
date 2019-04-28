@@ -5,8 +5,8 @@
 
 (provide
  (contract-out
-  [yao-image (-> yao? image?)]
-  [gua-image (-> gua? image?)]
+  [yao->image (-> yao? image?)]
+  [gua->image (-> gua? image?)]
   ))
 
 (define YAO-WIDTH 100)
@@ -30,13 +30,13 @@
     (beside half gap half)
     ))
 
-(define (yao-image yao)
+(define (yao->image yao)
   (if (zero? yao)
       (above (yao-gap-image) (yin-image))
       (above (yao-gap-image) (yang-image))))
 
-(define (gua-image gua)
-  (let ([yao-imgs (map yao-image gua)])
+(define (gua->image gua)
+  (let ([yao-imgs (map yao->image gua)])
     (apply above (reverse yao-imgs))
     ))
 
@@ -45,6 +45,6 @@
 
   (require rackunit rackunit/text-ui)
 
-  (gua-image '(1 0 0 0 1 1))
+  (gua->image '(1 0 0 0 1 1))
 
   )
