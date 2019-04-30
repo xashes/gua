@@ -64,7 +64,6 @@
     (check-equal? (gua-name xu) "需")
     (check-equal? (gua-xu meng) 4)
     (check-equal? (gua-xu xu) 5)
-    (xu-gua 63)
     )
 
   )
