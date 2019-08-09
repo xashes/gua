@@ -35,7 +35,8 @@
        (andmap yao? lst)))
 
 (define (gua? lst)
-  (or gua8? gua64?))
+  (or (gua8? lst)
+      (gua64? lst)))
 
 (define (yao-posn? i)
   (and (>= i 1)
@@ -73,6 +74,18 @@
     (if (member idx yaos)
         (yao-bian yao)
         yao)))
+
+;; gua64 -> gong
+
+;; gong -> gua64
+;; 生成本宫的归魂卦
+;; 生成本宫的游魂卦
+
+;; gua64 -> (U gong boolean?)
+;; 判断是否为某宫的游魂卦，是则返回宫名，否则返回 #f
+
+;; gua64 -> (U gua64 boolean?)
+;; 返回上、下经对应卦，如果不存在，则返回 #f
 
 
 (module+ test
