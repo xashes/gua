@@ -12,7 +12,20 @@
 (define YAO-WIDTH 100)
 (define YAO-HEIGHT 15)
 
-(define GUA0 (make-gua '(1 1 0 0 0 1) CENTER-X CENTER-Y YAO-WIDTH YAO-HEIGHT BG-COLOR 'cyan))
+(define (make-gua lon mid-x bottom-y)
+  (for/list ([yao-n (in-list lon)]
+             [i (in-range (length lon))]
+             )
+    (let ([yao-y (- bottom-y
+                    (+
+                     (* i
+                        (* YAO-HEIGHT 4/3))
+                     (/ YAO-HEIGHT 2)))])
+      (new yao% [n yao-n] [x mid-x] [y yao-y] [width YAO-WIDTH] [height YAO-HEIGHT]
+           [gap-color BG-COLOR]))
+    ))
+
+(define GUA0 (make-gua '(1 1 0 0 0 1) CENTER-X CENTER-Y))
 
 (define (render/yao yao bg)
   (place-image (send yao render)

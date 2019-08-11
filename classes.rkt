@@ -3,8 +3,7 @@
 (require 2htdp/image
          2htdp/universe
          "gua.rkt")
-(provide yao%
-         make-gua)
+(provide yao%)
 
 (define yao%
   (class object%
@@ -43,17 +42,4 @@
 
     (define/public (bian)
       (set! n (yao-bian n)))
-    ))
-
-(define (make-gua lon mid-x bottom-y yao-width yao-height gap-color yao-color)
-  (for/list ([yao-n (in-list lon)]
-             [i (in-range (length lon))]
-             )
-    (let ([yao-y (- bottom-y
-                    (+
-                     (* i
-                        (* yao-height 4/3))
-                     (/ yao-height 2)))])
-      (new yao% [n yao-n] [x mid-x] [y yao-y] [width yao-width] [height yao-height]
-           [gap-color gap-color] [yao-color yao-color]))
     ))
