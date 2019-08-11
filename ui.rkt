@@ -46,8 +46,8 @@
     (place-images (reverse yao-imgs)
                   (for/list ([i (in-range 6)])
                     (make-posn x (+ (* i
-                                  (+ YAO-HEIGHT GUA-GAP))
-                               (/ YAO-HEIGHT 2))))
+                                       (+ YAO-HEIGHT GUA-GAP))
+                                    (/ YAO-HEIGHT 2))))
                   GUA-BG)))
 
 (define/contract (render/gua g img)
