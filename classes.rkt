@@ -43,3 +43,15 @@
     (define/public (bian)
       (set! n (yao-bian n)))
     ))
+
+(define gua64%
+  (class object%
+    (init-field [width 200]
+                [yao-height 30]
+                [gap-color 'white]
+                [yao-color 'cyan]
+                [x 0]
+                [y 0]
+                [yaos '(1 1 1 1 1 1)])
+    (super-new)
+    ))
