@@ -19,18 +19,24 @@
 
     (super-new)
 
-    (define/private (render/yang)
+    (define YANG-IMG
       (rectangle width height 'solid color)
       )
 
-    (define/private (render/yin)
+    (define YIN-IMG
       (overlay (rectangle (* width 1/5) (+ height 1) 'solid gap-color)
-               (render/yang)))
+               YANG-IMG))
 
-    (define/public (render)
+    (define/public (->image)
       (if (zero? n)
-          (render/yin)
-          (render/yang)))
+          YIN-IMG
+          YANG-IMG))
+
+    (define/public (render bg)
+      (place-image (->image)
+                   x y
+                   bg)
+      )
 
     (define/public (mouse-on? mx my)
       (let ([left (- x (/ width 2))]
@@ -70,4 +76,10 @@
                [height yao-height]
                [gap-color gap-color]
                [color yao-color]))))
+
+    (define/public (render bg)
+      (for/fold ([bg bg])
+                ([yao (in-list (make-yaos))])
+        (send yao render bg)))
+
     ))
