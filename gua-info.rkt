@@ -9,6 +9,7 @@
   [gua-name (-> gua64? string?)]
   [gua-xu (-> gua64? gua-xu-index?)]
   [xu-gua (-> gua-xu-index? hash?)]
+  [gua-ci (-> gua64? string?)]
   ))
 
 
@@ -66,4 +67,24 @@
     (check-equal? (gua-xu xu) 5)
     )
 
+  )
+
+(define (gua-ci gua)
+  (hash-ref (gua-info gua) 'gua-detail)
+  )
+
+(module+ test
+  (check-equal? (gua-ci '(1 1 1 1 1 1))
+                "元亨利贞。")
+  )
+
+(provide (contract-out [yao-ci (-> gua64? nonnegative-integer? string?)]))
+(define (yao-ci gua yn)
+  (list-ref (hash-ref (gua-info gua) 'yao-detail) (sub1 yn))
+  )
+(module+ test
+  (check-equal? (yao-ci '(1 1 1 1 1 1) 1)
+                "潜龙勿用。")
+  (check-equal? (yao-ci '(1 1 1 1 1 1) 6)
+                "亢龙有悔。")
   )
