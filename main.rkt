@@ -29,14 +29,13 @@
 (define (mouse-handler gua mx my me)
   (cond
     [(mouse=? me "button-down")
-     (begin
-       (for ([yao (in-list (send gua make-yaos))]
-             [i (in-range 1 7)])
-         (if (send yao mouse-on? mx my)
+     (let ([i (send gua mouse-on-yao? mx my)])
+       (if i
+           (begin
              (send gua zhi-gua i)
-             gua))
-       gua)
-     ]
+             gua
+             )
+           gua))]
     [else gua]
     )
   )

@@ -62,9 +62,22 @@
                 [yaos '(1 1 1 1 1 1)])
     (super-new)
 
+    (define GUA-GAP
+      (* yao-height 1/3))
+    
+    (define/public (gua-height)
+      (+ (* yao-height 6)
+         (* GUA-GAP 5))
+      )
+
+    (define BOTTOM-Y
+      (+ y
+         (* (gua-height) 1/2))
+      )
+
     (define/public (yao-ys)
       (for/list ([i (in-range (length yaos))])
-        (- y
+        (- BOTTOM-Y
            (+
             (* i
                (* yao-height 4/3))
@@ -85,6 +98,26 @@
       (for/fold ([bg bg])
                 ([yao (in-list (make-yaos))])
         (send yao render bg)))
+
+    ;; integer? integer? boolean?
+    (define/public (mouse-on? mx my)
+      (let ([top (- y (/ (gua-height) 2))]
+            [bottom (+ y (/ (gua-height) 2))]
+            [left (- x (/ width 2))]
+            [right (+ x (/ width 2))]
+            )
+        (and (< left mx right)
+             (< top my bottom)))
+      )
+
+    (define/public (mouse-on-yao? mx my)
+      (let helper ([yao-lst (make-yaos)]
+                   [i 1])
+        (if (empty? yao-lst)
+            #f
+            (if (send (first yao-lst) mouse-on? mx my)
+                i
+                (helper (rest yao-lst) (add1 i))))))
 
     (define/public (zhi-gua . i)
       (set! yaos
