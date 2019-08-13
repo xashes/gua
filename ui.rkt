@@ -8,6 +8,9 @@
 
 (define WIDTH 300)
 (define HEIGHT 300)
+(define CENTER-X (/ WIDTH 2))
+(define CENTER-Y (/ HEIGHT 2))
+
 (define BG-COLOR 'white)
 (define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
 
@@ -22,6 +25,8 @@
 (define GUA-HEIGHT (+ (* YAO-HEIGHT 6)
                       (* GUA-GAP 5)))
 (define GUA-BG (rectangle YAO-WIDTH GUA-HEIGHT 'outline BG-COLOR))
+(define GUA-CENTER-X CENTER-X)
+(define GUA-CENTER-Y CENTER-Y)
 
 (define/contract (yao->img y)
   (-> yao? image?)
@@ -36,21 +41,56 @@
   )
 
 (define/contract (gua->img g)
-  (-> gua? image?)
+  (-> gua64? image?)
   (let ([yao-imgs (map yao->img g)]
         [x (/ YAO-WIDTH 2)])
     (place-images (reverse yao-imgs)
                   (for/list ([i (in-range 6)])
                     (make-posn x (+ (* i
-                                  (+ YAO-HEIGHT GUA-GAP))
-                               (/ YAO-HEIGHT 2))))
+                                       (+ YAO-HEIGHT GUA-GAP))
+                                    (/ YAO-HEIGHT 2))))
                   GUA-BG)))
-(place-image
- (gua->img '(0 0 0 1 0 1))
- 150 150
- MTS)
 
-(define/contract (point-on-img? x y img)
-  (-> real? real? image? boolean?)
-  #f
+(define/contract (render/gua g img)
+  (-> gua64? image? image?)
+  (place-image
+   (gua->img g)
+   CENTER-X CENTER-Y
+   img))
+
+(define/contract (render g)
+  (-> gua64? image?)
+  (render/gua g MTS)
   )
+
+(define/contract (mouse-on-gua? x y)
+  (-> integer? integer? boolean?)
+  (let ([left (- GUA-CENTER-X (/ YAO-WIDTH 2))]
+        [right (+ GUA-CENTER-X (/ YAO-WIDTH 2))]
+        [top (- GUA-CENTER-Y (/ GUA-HEIGHT 2))]
+        [bottom (+ GUA-CENTER-Y (/ GUA-HEIGHT 2))]
+        )
+    (and (< left x right)
+         (< top y bottom)))
+  )
+
+(define/contract (mouse-handler g x y me)
+  (-> gua64? integer? integer? mouse-event? gua64?)
+  (if (mouse=? me "button-down")
+      (cond
+        [(mouse-on-gua? x y) '(1 0 0 0 0 1)]
+        [else g]
+        )
+      g
+      )
+  )
+
+(define/contract (run ws)
+  (-> gua64? gua64?)
+  (big-bang ws
+            [to-draw render]
+            [on-mouse mouse-handler]
+            )
+  )
+
+(run '(1 1 1 0 0 0))
