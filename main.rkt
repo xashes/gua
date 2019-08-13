@@ -9,8 +9,8 @@
 (define CENTER-Y (/ HEIGHT 2))
 (define BG-COLOR 'white)
 (define MTS (empty-scene WIDTH HEIGHT))
-(define YAO-WIDTH 100)
-(define YAO-HEIGHT 15)
+(define YAO-WIDTH 200)
+(define YAO-HEIGHT (* YAO-WIDTH 0.15))
 
 (define (make-gua lon mid-x bottom-y)
   (for/list ([yao-n (in-list lon)]
@@ -25,7 +25,7 @@
            [gap-color BG-COLOR]))
     ))
 
-(define GUA0 (make-gua '(1 1 0 0 0 1) CENTER-X CENTER-Y))
+(define GUA0 (make-gua '(1 1 0 0 0 1) CENTER-X HEIGHT))
 
 (define (render/yao yao bg)
   (place-image (send yao render)
@@ -33,11 +33,15 @@
                bg
                ))
 
-(define (render gua)
-  (for/fold ([bg MTS])
+(define (render/gua gua bg)
+  (for/fold ([bg bg])
             ([yao (in-list gua)])
     (render/yao yao bg)
     ))
+
+(define (render gua)
+  (render/gua gua MTS)
+  )
 
 (define (mouse-handler gua mx my me)
   (cond
