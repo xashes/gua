@@ -8,9 +8,9 @@
 
 (define WIDTH 300)
 (define HEIGHT 300)
-(define MTS (empty-scene WIDTH HEIGHT))
-
 (define BG-COLOR 'white)
+(define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
+
 (define YAO-COLOR 'cyan)
 (define YAO-WIDTH 100)
 (define YAO-HEIGHT 15)
