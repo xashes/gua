@@ -12,19 +12,6 @@
 (define YAO-WIDTH 200)
 (define YAO-HEIGHT (* YAO-WIDTH 0.15))
 
-(define (make-gua lon mid-x bottom-y)
-  (for/list ([yao-n (in-list lon)]
-             [i (in-range (length lon))]
-             )
-    (let ([yao-y (- bottom-y
-                    (+
-                     (* i
-                        (* YAO-HEIGHT 4/3))
-                     (/ YAO-HEIGHT 2)))])
-      (new yao% [n yao-n] [x mid-x] [y yao-y] [width YAO-WIDTH] [height YAO-HEIGHT]
-           [gap-color BG-COLOR]))
-    ))
-
 (define GUA0 (new gua64% [width YAO-WIDTH]
                         [yao-height YAO-HEIGHT]
                         [gap-color BG-COLOR]
@@ -42,12 +29,13 @@
 (define (mouse-handler gua mx my me)
   (cond
     [(mouse=? me "button-down")
-     (for/list ([yao (in-list gua)])
-       (if (send yao mouse-on? mx my)
-           (begin
-             (send yao bian)
-             yao)
-           yao))
+     (begin
+       (for ([yao (in-list (send gua make-yaos))]
+             [i (in-range 1 7)])
+         (if (send yao mouse-on? mx my)
+             (send gua zhi-gua i)
+             gua))
+       gua)
      ]
     [else gua]
     )

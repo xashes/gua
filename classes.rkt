@@ -62,24 +62,36 @@
                 [yaos '(1 1 1 1 1 1)])
     (super-new)
 
+    (define/public (yao-ys)
+      (for/list ([i (in-range (length yaos))])
+        (- y
+           (+
+            (* i
+               (* yao-height 4/3))
+            (/ yao-height 2)))))
+
     (define/public (make-yaos)
-      (for/list ([yao-n (in-list (reverse yaos))]
-                 [i (in-range (length yaos))])
-        (let ([yao-y (+ y
-                        (* i
-                           (* yao-height 4/3))
-                        (/ yao-height 2))])
+      (for/list ([yao-n (in-list yaos)]
+                 [yao-y (in-list (yao-ys))])
           (new yao% [n yao-n]
                [x x]
                [y yao-y]
                [width width]
                [height yao-height]
                [gap-color gap-color]
-               [color yao-color]))))
+               [color yao-color])))
 
     (define/public (render bg)
       (for/fold ([bg bg])
                 ([yao (in-list (make-yaos))])
         (send yao render bg)))
+
+    (define/public (zhi-gua . i)
+      (set! yaos
+            (for/list ([yao-n (in-list yaos)]
+                       [idx (in-range 1 7)])
+              (if (member idx i)
+                  (yao-bian yao-n)
+                  yao-n))))
 
     ))
