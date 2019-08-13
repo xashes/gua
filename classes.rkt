@@ -3,14 +3,15 @@
 (require 2htdp/image
          2htdp/universe
          "gua.rkt")
-(provide yao%)
+(provide yao%
+         gua64%)
 
 (define yao%
   (class object%
     (init-field [width 100]
                 [height 15]
                 [gap-color 'white]
-                [yao-color 'cyan]
+                [color 'cyan]
                 [x 0]
                 [y 0]
                 [n 0]
@@ -19,7 +20,7 @@
     (super-new)
 
     (define/private (render/yang)
-      (rectangle width height 'solid yao-color)
+      (rectangle width height 'solid color)
       )
 
     (define/private (render/yin)
@@ -42,4 +43,31 @@
 
     (define/public (bian)
       (set! n (yao-bian n)))
+    ))
+
+(define gua64%
+  (class object%
+    (init-field [width 200]
+                [yao-height 30]
+                [gap-color 'white]
+                [yao-color 'cyan]
+                [x 0]
+                [y 0]
+                [yaos '(1 1 1 1 1 1)])
+    (super-new)
+
+    (define/public (make-yaos)
+      (for/list ([yao-n (in-list (reverse yaos))]
+                 [i (in-range (length yaos))])
+        (let ([yao-y (+ y
+                        (* i
+                           (* yao-height 4/3))
+                        (/ yao-height 2))])
+          (new yao% [n yao-n]
+               [x x]
+               [y yao-y]
+               [width width]
+               [height yao-height]
+               [gap-color gap-color]
+               [color yao-color]))))
     ))

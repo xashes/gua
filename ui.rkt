@@ -10,9 +10,10 @@
 (define HEIGHT 300)
 (define CENTER-X (/ WIDTH 2))
 (define CENTER-Y (/ HEIGHT 2))
-(define MTS (empty-scene WIDTH HEIGHT))
 
 (define BG-COLOR 'white)
+(define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
+
 (define YAO-COLOR 'cyan)
 (define YAO-WIDTH 100)
 (define YAO-HEIGHT 15)
