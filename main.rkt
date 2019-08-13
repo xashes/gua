@@ -8,7 +8,7 @@
 (define CENTER-X (/ WIDTH 2))
 (define CENTER-Y (/ HEIGHT 2))
 (define BG-COLOR 'white)
-(define MTS (empty-scene WIDTH HEIGHT))
+(define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
 (define YAO-WIDTH 100)
 (define YAO-HEIGHT 15)
 
@@ -25,7 +25,15 @@
            [gap-color BG-COLOR]))
     ))
 
-(define GUA0 (make-gua '(1 1 0 0 0 1) CENTER-X CENTER-Y))
+(define GUA0 (send (new gua64% [width YAO-WIDTH]
+                        [yao-height YAO-HEIGHT]
+                        [gap-color BG-COLOR]
+                        [yao-color 'cyan]
+                        [x CENTER-X]
+                        [y CENTER-Y]
+                        [yaos '(1 1 0 0 0 1)]
+                        ) make-yaos)
+  )
 
 (define (render/yao yao bg)
   (place-image (send yao render)
