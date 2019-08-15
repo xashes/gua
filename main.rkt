@@ -13,12 +13,11 @@
 (define YAO-HEIGHT (* YAO-WIDTH 0.15))
 
 (define GUA0 (new gua64% [width YAO-WIDTH]
-                        [yao-height YAO-HEIGHT]
                         [gap-color BG-COLOR]
                         [yao-color 'cyan]
                         [x CENTER-X]
                         [y CENTER-Y]
-                        [yaos '(1 1 0 0 0 1)]
+                        [xiang '(1 1 0 0 0 1)]
                         )
   )
 

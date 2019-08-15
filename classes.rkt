@@ -8,8 +8,7 @@
 
 (define yao%
   (class object%
-    (init-field [width 100]
-                [height 15]
+    (init-field [width 200]
                 [gap-color 'white]
                 [color 'cyan]
                 [x 0]
@@ -19,6 +18,7 @@
 
     (super-new)
 
+    (define height (* width 0.15))
     (define YANG-IMG
       (rectangle width height 'solid color)
       )
@@ -54,17 +54,17 @@
 (define gua64%
   (class object%
     (init-field [width 200]
-                [yao-height 30]
                 [gap-color 'white]
                 [yao-color 'cyan]
                 [x 0]
                 [y 0]
-                [yaos '(1 1 1 1 1 1)])
+                [xiang '(1 1 1 1 1 1)])
     (super-new)
 
+    (define yao-height (* width 0.15))
     (define GUA-GAP
       (* yao-height 1/3))
-    
+
     (define/public (gua-height)
       (+ (* yao-height 6)
          (* GUA-GAP 5))
@@ -76,7 +76,7 @@
       )
 
     (define/public (yao-ys)
-      (for/list ([i (in-range (length yaos))])
+      (for/list ([i (in-range (length xiang))])
         (- BOTTOM-Y
            (+
             (* i
@@ -84,13 +84,12 @@
             (/ yao-height 2)))))
 
     (define/public (make-yaos)
-      (for/list ([yao-n (in-list yaos)]
+      (for/list ([yao-n (in-list xiang)]
                  [yao-y (in-list (yao-ys))])
           (new yao% [n yao-n]
                [x x]
                [y yao-y]
                [width width]
-               [height yao-height]
                [gap-color gap-color]
                [color yao-color])))
 
@@ -120,8 +119,8 @@
                 (helper (rest yao-lst) (add1 i))))))
 
     (define/public (zhi-gua . i)
-      (set! yaos
-            (for/list ([yao-n (in-list yaos)]
+      (set! xiang
+            (for/list ([yao-n (in-list xiang)]
                        [idx (in-range 1 7)])
               (if (member idx i)
                   (yao-bian yao-n)
