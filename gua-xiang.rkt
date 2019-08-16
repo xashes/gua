@@ -3,40 +3,42 @@
 ;; interface
 (provide
  (contract-out
-  [yao? (-> integer? boolean?)]
-  [gua? (-> (listof integer?) boolean?)]
-  [gua8? (-> (listof integer?) boolean?)]
-  [gua64? (-> (listof integer?) boolean?)]
-  [yao-bian (-> yao? yao?)]
-  [zong-gua (-> gua? gua?)]
-  [cuo-gua (-> gua? gua?)]
-  [jiao-gua (-> gua64? gua8?)]
-  [hu-gua (-> gua64? gua8?)]
-  [jiaohu-gua (-> gua64? gua64?)]
-  [zhi-gua (->* (gua?) () #:rest yao-posns? gua?)]
+  [yao-xiang? (-> integer? boolean?)]
+  [gua-xiang? (-> (listof integer?) boolean?)]
+  [gua-xiang8? (-> (listof integer?) boolean?)]
+  [gua-xiang64? (-> (listof integer?) boolean?)]
+  [yao-bian (-> yao-xiang? yao-xiang?)]
+  [zong-gua (-> gua-xiang? gua-xiang?)]
+  [cuo-gua (-> gua-xiang? gua-xiang?)]
+  [jiao-gua (-> gua-xiang64? gua-xiang8?)]
+  [hu-gua (-> gua-xiang64? gua-xiang8?)]
+  [jiaohu-gua (-> gua-xiang64? gua-xiang64?)]
+  [zhi-gua (->* (gua-xiang?) () #:rest yao-posns? gua-xiang?)]
+  [yao-posn? (-> integer? boolean?)]
+  [yao-posns? (-> (listof integer?) boolean?)]
   ))
 ;; end of interface
 
-;; gua64 ::= gua8 . gua8
-;; gua8 ::= (list yao yao yao)
+;; gua-xiang64 ::= gua-xiang8 . gua-xiang8
+;; gua-xiang8 ::= (list yao yao yao)
 ;; yao ::= 0 | 1
 
-(define (yao? i)
+(define (yao-xiang? i)
   (and (integer? i)
        (or (zero? i)
            (= i 1))))
 
-(define (gua8? lst)
+(define (gua-xiang8? lst)
   (and (= (length lst) 3)
-       (andmap yao? lst)))
+       (andmap yao-xiang? lst)))
 
-(define (gua64? lst)
+(define (gua-xiang64? lst)
   (and (= (length lst) 6)
-       (andmap yao? lst)))
+       (andmap yao-xiang? lst)))
 
-(define (gua? lst)
-  (or (gua8? lst)
-      (gua64? lst)))
+(define (gua-xiang? lst)
+  (or (gua-xiang8? lst)
+      (gua-xiang64? lst)))
 
 (define (yao-posn? i)
   (and (>= i 1)
@@ -75,16 +77,16 @@
         (yao-bian yao)
         yao)))
 
-;; gua64 -> gong
+;; gua-xiang64 -> gong
 
-;; gong -> gua64
+;; gong -> gua-xiang64
 ;; 生成本宫的归魂卦
 ;; 生成本宫的游魂卦
 
-;; gua64 -> (U gong boolean?)
+;; gua-xiang64 -> (U gong boolean?)
 ;; 判断是否为某宫的游魂卦，是则返回宫名，否则返回 #f
 
-;; gua64 -> (U gua64 boolean?)
+;; gua-xiang64 -> (U gua-xiang64 boolean?)
 ;; 返回上、下经对应卦，如果不存在，则返回 #f
 
 
@@ -109,16 +111,16 @@
   (check-equal? (zhi-gua '(0 0 0 1 1 1) 3 5 6)
                 '(0 0 1 1 0 0))
 
-  (check-true (yao? 1))
-  (check-true (yao? 0))
-  (check-false (yao? 2))
-  (check-false (yao? 'a))
+  (check-true (yao-xiang? 1))
+  (check-true (yao-xiang? 0))
+  (check-false (yao-xiang? 2))
+  (check-false (yao-xiang? 'a))
 
-  (check-true (gua8? '(1 1 1)))
-  (check-false (gua8? '(1 1 2)))
+  (check-true (gua-xiang8? '(1 1 1)))
+  (check-false (gua-xiang8? '(1 1 2)))
 
-  (check-true (gua64? '(1 1 1 0 0 1)))
-  (check-false (gua64? '(1 1 1 0 0 6)))
+  (check-true (gua-xiang64? '(1 1 1 0 0 1)))
+  (check-false (gua-xiang64? '(1 1 1 0 0 6)))
 
 
   )
