@@ -27,6 +27,7 @@
                     200
                     'cyan
                     'white))
+  (define yao1 (struct-copy yao yao0 [xiang #:parent gua 1]))
   )
 
 (define/contract (get-yao-height w)
@@ -64,3 +65,12 @@
                    yang)
           yang
           ))))
+(module+ test
+  (check-equal? (yao->image yao0)
+                (overlay (rectangle 40 31 'solid 'white)
+                         (rectangle 200 (get-yao-height 200)
+                                    'solid
+                                    'cyan)))
+  (check-equal? (yao->image yao1)
+                (rectangle 200 30 'solid 'cyan))
+  )
