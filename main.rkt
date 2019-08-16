@@ -30,10 +30,7 @@
     [(mouse=? me "button-down")
      (let ([i (send gua mouse-on-yao? mx my)])
        (if i
-           (begin
-             (send gua zhi-gua i)
-             gua
-             )
+           (send gua zhi i)
            gua))]
     [else gua]
     )

@@ -118,12 +118,36 @@
                 i
                 (helper (rest yao-lst) (add1 i))))))
 
-    (define/public (zhi-gua . i)
-      (set! xiang
-            (for/list ([yao-n (in-list xiang)]
-                       [idx (in-range 1 7)])
-              (if (member idx i)
-                  (yao-bian yao-n)
-                  yao-n))))
+    (define/private (new-gua new-xiang
+                             [nx x]
+                             [ny y]
+                             [scale 1.0]
+                             [ngap-color gap-color]
+                             [nyao-color yao-color]
+                             )
+      (new gua64% [x nx]
+           [y ny]
+           [width (* width scale)]
+           [gap-color ngap-color]
+           [yao-color nyao-color]
+           [xiang new-xiang])
+      )
 
+    (define/public (zhi i)
+      (new-gua (zhi-gua xiang i)))
+
+    (define/public (zong)
+      (new-gua (zong-gua xiang)))
+
+    (define/public (cuo)
+      (new-gua (cuo-gua xiang)))
+
+    (define/public (jiao)
+      (new-gua (jiao-gua xiang)))
+
+    (define/public (hu)
+      (new-gua (hu-gua xiang)))
+
+    (define/public (jiaohu)
+      (new-gua (jiaohu-gua xiang)))
     ))
