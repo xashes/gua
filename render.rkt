@@ -4,75 +4,76 @@
          2htdp/universe
          "gua-xiang.rkt")
 
-(provide (contract-out [struct gua
+(provide (contract-out [struct guar
                          ([xiang gua-xiang?]
                           [posn (vectorof real?)]
                           [width real?])]
-                       [struct (yao gua)
+                       [struct (yaor guar)
                          ([xiang yao-xiang?]
                           [posn (vectorof real?)]
                           [width real?]
                           [color color?]
                           [gap-color color?])]))
-(struct gua (xiang posn width) #:transparent)
-(struct yao gua (color gap-color) #:transparent)
+;; structs for render
+(struct guar (xiang posn width) #:transparent)
+(struct yaor guar (color gap-color) #:transparent)
 (module+ test
   (require rackunit rackunit/text-ui)
 
-  (define gua0 (gua '(1 1 0 0 0 1)
+  (define guar0 (guar '(1 1 0 0 0 1)
                     #(200 300)
                     200))
-  (define yao0 (yao 0
+  (define yaor0 (yaor 0
                     #(100 80)
                     200
                     'cyan
                     'white))
-  (define yao1 (struct-copy yao yao0 [xiang #:parent gua 1]))
+  (define yaor1 (struct-copy yaor yaor0 [xiang #:parent guar 1]))
   )
 
 ;; private
-(define/contract (get-yao-height w)
+(define/contract (get-yaor-height w)
   (-> real? real?)
   (* w 0.15)
   )
 (module+ test
-  (check-= (get-yao-height 200) 30 0.001)
+  (check-= (get-yaor-height 200) 30 0.001)
   )
 
 ;; private
-(define/contract (get-yao-gap w)
+(define/contract (get-yaor-gap w)
   (-> real? real?)
-  (* (get-yao-height w) 1/3)
+  (* (get-yaor-height w) 1/3)
   )
 (module+ test
-  (check-= (get-yao-gap 200) 10 0.001)
+  (check-= (get-yaor-gap 200) 10 0.001)
   )
 
 ;; private
-(define/contract (get-gua-height w)
+(define/contract (get-guar-height w)
   (-> real? real?)
-  (+ (* (get-yao-height w) 6)
-     (* (get-yao-gap w) 5)))
+  (+ (* (get-yaor-height w) 6)
+     (* (get-yaor-gap w) 5)))
 (module+ test
-  (check-= (get-gua-height 200) 230 0.001)
+  (check-= (get-guar-height 200) 230 0.001)
   )
 
 (define/contract (get-height g)
-  (-> gua? real?)
-  (let ([w (gua-width g)])
-    (if (yao? g)
-        (get-yao-height w)
-        (get-gua-height w))))
+  (-> guar? real?)
+  (let ([w (guar-width g)])
+    (if (yaor? g)
+        (get-yaor-height w)
+        (get-guar-height w))))
 (module+ test
-  (check-= (get-height gua0) 230 0.001)
-  (check-= (get-height yao1) 30 0.001)
+  (check-= (get-height guar0) 230 0.001)
+  (check-= (get-height yaor1) 30 0.001)
   )
 
-(define/contract (yao->image y)
-  (-> yao? image?)
+(define/contract (yaor->image yr)
+  (-> yaor? image?)
   (let-values ([(s xiang _ w c gc)
-                (vector->values (struct->vector y))])
-    (let* ([h (get-yao-height w)]
+                (vector->values (struct->vector yr))])
+    (let* ([h (get-yaor-height w)]
            [yang (rectangle w h 'solid c)])
       (if (zero? xiang)
           (overlay (rectangle (* w 1/5) (+ h 1) 'solid gc)
@@ -80,19 +81,19 @@
           yang
           ))))
 (module+ test
-  (check-equal? (yao->image yao0)
+  (check-equal? (yaor->image yaor0)
                 (overlay (rectangle 40 31 'solid 'white)
-                         (rectangle 200 (get-yao-height 200)
+                         (rectangle 200 (get-yaor-height 200)
                                     'solid
                                     'cyan)))
-  (check-equal? (yao->image yao1)
+  (check-equal? (yaor->image yaor1)
                 (rectangle 200 30 'solid 'cyan))
   )
 
-(define/contract (render/yao yo bg)
-  (-> yao? image? image?)
-  (let-values ([(x y) (vector->values (gua-posn yo))])
-    (place-image (yao->image yo)
+(define/contract (render/yaor yr bg)
+  (-> yaor? image? image?)
+  (let-values ([(x y) (vector->values (guar-posn yr))])
+    (place-image (yaor->image yr)
                  x y
                  bg)))
 (module+ test
@@ -101,16 +102,16 @@
   (define BG-COLOR 'white)
   (define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
 
-  (check-equal? (render/yao yao0 MTS)
-                (place-image (yao->image yao0)
+  (check-equal? (render/yaor yaor0 MTS)
+                (place-image (yaor->image yaor0)
                              100 80
                              MTS))
   )
 
-(define/contract (get-edges/gua g)
-  (-> gua? (vectorof real?))
-  (let-values ([(x y) (vector->values (gua-posn g))])
-    (let* ([width (gua-width g)]
+(define/contract (get-edges/guar g)
+  (-> guar? (vectorof real?))
+  (let-values ([(x y) (vector->values (guar-posn g))])
+    (let* ([width (guar-width g)]
            [height (get-height g)]
            [left (- x (/ width 2))]
            [right (+ x (/ width 2))]
@@ -120,39 +121,39 @@
       (vector left right top bottom)))
   )
 (module+ test
-  (check-equal? (get-edges/gua gua0)
+  (check-equal? (get-edges/guar guar0)
                 #(100 300 185.0 415.0))
   )
 
-(define/contract (mouse-on-gua? mx my g)
-  (-> integer? integer? gua? boolean?)
+(define/contract (mouse-on-guar? mx my g)
+  (-> integer? integer? guar? boolean?)
   (let-values ([(left right top bottom)
-                (vector->values (get-edges/gua g))])
+                (vector->values (get-edges/guar g))])
     (and (<= left mx right)
          (<= top my bottom))))
 (module+ test
-  (check-true (mouse-on-gua? 100 186 gua0))
-  (check-true (mouse-on-gua? 300 415 gua0))
-  (check-false (mouse-on-gua? 300 416 gua0))
-  (check-false (mouse-on-gua? 301 186 gua0))
-  (check-false (mouse-on-gua? 99 186 gua0))
-  (check-false (mouse-on-gua? 100 184 gua0))
+  (check-true (mouse-on-guar? 100 186 guar0))
+  (check-true (mouse-on-guar? 300 415 guar0))
+  (check-false (mouse-on-guar? 300 416 guar0))
+  (check-false (mouse-on-guar? 301 186 guar0))
+  (check-false (mouse-on-guar? 99 186 guar0))
+  (check-false (mouse-on-guar? 100 184 guar0))
 
-  (check-false (mouse-on-gua? 100 48 yao0))
-  (check-true (mouse-on-gua? 100 80 yao0))
+  (check-false (mouse-on-guar? 100 48 yaor0))
+  (check-true (mouse-on-guar? 100 80 yaor0))
   )
 
 (define/contract (get-bottom-y g)
-  (-> gua? real?)
-  (let* ([p (gua-posn g)]
+  (-> guar? real?)
+  (let* ([p (guar-posn g)]
          [y (vector-ref p 1)])
     (+ y
        (/ (get-height g) 2))))
 (module+ test
-  (check-= (get-bottom-y gua0) 415 0.001)
+  (check-= (get-bottom-y guar0) 415 0.001)
   )
 
-(define/contract (gua->yao-ys g)
-  (-> gua? (listof real?))
+(define/contract (guar->yaor-ys g)
+  (-> guar? (listof real?))
   null
   )
