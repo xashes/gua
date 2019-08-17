@@ -12,8 +12,13 @@
                          ([xiang yao?]
                           [posn (vectorof real?)]
                           [width real?]
-                          [color color?]
-                          [gap-color color?])]))
+                          [color (or/c symbol? color?)]
+                          [gap-color (or/c symbol? color?)])]))
+
+;; (provide mouse-on-guar?
+;;          mouse-on-yaor-n?
+;;          render/gua)
+
 ;; structs for render
 (struct guar (xiang posn width) #:transparent)
 (struct yaor guar (color gap-color) #:transparent)
@@ -69,45 +74,6 @@
   (check-= (get-height yaor1) 30 0.001)
   )
 
-(define/contract (yaor->image yr)
-  (-> yaor? image?)
-  (let-values ([(s xiang _ w c gc)
-                (vector->values (struct->vector yr))])
-    (let* ([h (get-yaor-height w)]
-           [yang (rectangle w h 'solid c)])
-      (if (zero? xiang)
-          (overlay (rectangle (* w 1/5) (+ h 1) 'solid gc)
-                   yang)
-          yang
-          ))))
-(module+ test
-  (check-equal? (yaor->image yaor0)
-                (overlay (rectangle 40 31 'solid 'white)
-                         (rectangle 200 (get-yaor-height 200)
-                                    'solid
-                                    'cyan)))
-  (check-equal? (yaor->image yaor1)
-                (rectangle 200 30 'solid 'cyan))
-  )
-
-(define/contract (render/yaor yr bg)
-  (-> yaor? image? image?)
-  (let-values ([(x y) (vector->values (guar-posn yr))])
-    (place-image (yaor->image yr)
-                 x y
-                 bg)))
-(module+ test
-  (define WIDTH 300)
-  (define HEIGHT 300)
-  (define BG-COLOR 'white)
-  (define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
-
-  (check-equal? (render/yaor yaor0 MTS)
-                (place-image (yaor->image yaor0)
-                             100 80
-                             MTS))
-  )
-
 (define/contract (get-edges/guar g)
   (-> guar? (vectorof real?))
   (let-values ([(x y) (vector->values (guar-posn g))])
@@ -155,5 +121,81 @@
 
 (define/contract (guar->yaor-ys g)
   (-> guar? (listof real?))
-  null
+  (let* ([xiang (guar-xiang g)]
+         [w (guar-width g)]
+         [yh (get-yaor-height w)]
+         [by (get-bottom-y g)]
+         )
+    (for/list ([i (in-range (length xiang))])
+      (- by
+         (+ (* i
+               (* yh 4/3))
+            (/ yh 2))))))
+(module+ test
+  (check-equal? (guar->yaor-ys guar0)
+                (reverse '(200.0 240.0 280.0 320.0 360.0 400.0))))
+
+(define/contract (guar->yaor-list g color gap-color)
+  (-> guar? (or/c symbol? color?) (or/c symbol? color?) (listof yaor?))
+  (for/list ([xiang (in-list (guar-xiang g))]
+             [y (in-list (guar->yaor-ys g))])
+    (let ([x (vector-ref (guar-posn g) 0)]
+          [w (guar-width g)])
+      (yaor xiang (vector x y) w color gap-color))))
+(module+ test
+  (check-equal? (guar->yaor-list guar0 'cyan 'white)
+                (for/list ([y (in-list (reverse '(200.0 240.0 280.0 320.0 360.0 400.0)))]
+                           [xiang (in-list (guar-xiang guar0))])
+                  (yaor xiang (vector 200 y) 200 'cyan 'white)))
+  )
+(define/contract (yaor->image yr)
+  (-> yaor? image?)
+  (let-values ([(s xiang _ w c gc)
+                (vector->values (struct->vector yr))])
+    (let* ([h (get-yaor-height w)]
+           [yang (rectangle w h 'solid c)])
+      (if (zero? xiang)
+          (overlay (rectangle (* w 1/5) (+ h 1) 'solid gc)
+                   yang)
+          yang
+          ))))
+(module+ test
+  (check-equal? (yaor->image yaor0)
+                (overlay (rectangle 40 31 'solid 'white)
+                         (rectangle 200 (get-yaor-height 200)
+                                    'solid
+                                    'cyan)))
+  (check-equal? (yaor->image yaor1)
+                (rectangle 200 30 'solid 'cyan))
+  )
+
+(define/contract (render/yaor yr bg)
+  (-> yaor? image? image?)
+  (let-values ([(x y) (vector->values (guar-posn yr))])
+    (place-image (yaor->image yr)
+                 x y
+                 bg)))
+(module+ test
+  (define WIDTH 400)
+  (define HEIGHT 400)
+  (define BG-COLOR 'white)
+  (define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
+
+  (check-equal? (render/yaor yaor0 MTS)
+                (place-image (yaor->image yaor0)
+                             100 80
+                             MTS))
+  )
+
+(define/contract (render/guar g c gap-c bg)
+  (-> guar? (or/c symbol? color?) (or/c symbol? color?) image? image?)
+  (for/fold ([bg bg])
+            ([yao (in-list (guar->yaor-list g c gap-c))])
+    (render/yaor yao bg)))
+(module+ test
+  (check-equal? (render/guar guar0 'cyan 'white MTS)
+                (for/fold ([bg MTS])
+                          ([xiang (guar-xiang guar0)]
+                           [y (in-list (guar->yaor-ys guar0))])
+                  (render/yaor (yaor xiang (vector 200 y) 200 'cyan 'white) bg)))
   )
