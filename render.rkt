@@ -135,7 +135,7 @@
   (check-equal? (guar->yaor-ys guar0)
                 (reverse '(200.0 240.0 280.0 320.0 360.0 400.0))))
 
-(define/contract (guar->yaor-list g color gap-color)
+(define/contract (guar->yaor-list g [color 'cyan] [gap-color 'white])
   (-> guar? (or/c symbol? color?) (or/c symbol? color?) (listof yaor?))
   (for/list ([xiang (in-list (guar-xiang g))]
              [y (in-list (guar->yaor-ys g))])
@@ -187,13 +187,13 @@
                              MTS))
   )
 
-(define/contract (render/guar g c gap-c bg)
-  (-> guar? (or/c symbol? color?) (or/c symbol? color?) image? image?)
+(define/contract (render/guar g bg [c 'cyan] [gap-c 'white])
+  (-> guar? image? (or/c symbol? color?) (or/c symbol? color?) image?)
   (for/fold ([bg bg])
             ([yao (in-list (guar->yaor-list g c gap-c))])
     (render/yaor yao bg)))
 (module+ test
-  (check-equal? (render/guar guar0 'cyan 'white MTS)
+  (check-equal? (render/guar guar0 MTS 'cyan 'white)
                 (for/fold ([bg MTS])
                           ([xiang (guar-xiang guar0)]
                            [y (in-list (guar->yaor-ys guar0))])
