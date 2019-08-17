@@ -2,14 +2,14 @@
 
 (require 2htdp/image
          2htdp/universe
-         "gua-xiang.rkt")
+         "gua.rkt")
 
 (provide (contract-out [struct guar
-                         ([xiang gua-xiang?]
+                         ([xiang gua?]
                           [posn (vectorof real?)]
                           [width real?])]
                        [struct (yaor guar)
-                         ([xiang yao-xiang?]
+                         ([xiang yao?]
                           [posn (vectorof real?)]
                           [width real?]
                           [color color?]
