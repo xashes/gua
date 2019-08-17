@@ -107,7 +107,7 @@
                              MTS))
   )
 
-(define/contract (get-edges g)
+(define/contract (get-edges/gua g)
   (-> gua? (vectorof real?))
   (let-values ([(x y) (vector->values (gua-posn g))])
     (let* ([width (gua-width g)]
@@ -120,24 +120,39 @@
       (vector left right top bottom)))
   )
 (module+ test
-  (check-equal? (get-edges gua0)
+  (check-equal? (get-edges/gua gua0)
                 #(100 300 185.0 415.0))
   )
 
-(define/contract (mouse-on? mx my g)
+(define/contract (mouse-on-gua? mx my g)
   (-> integer? integer? gua? boolean?)
   (let-values ([(left right top bottom)
-                (vector->values (get-edges g))])
+                (vector->values (get-edges/gua g))])
     (and (<= left mx right)
          (<= top my bottom))))
 (module+ test
-  (check-true (mouse-on? 100 186 gua0))
-  (check-true (mouse-on? 300 415 gua0))
-  (check-false (mouse-on? 300 416 gua0))
-  (check-false (mouse-on? 301 186 gua0))
-  (check-false (mouse-on? 99 186 gua0))
-  (check-false (mouse-on? 100 184 gua0))
+  (check-true (mouse-on-gua? 100 186 gua0))
+  (check-true (mouse-on-gua? 300 415 gua0))
+  (check-false (mouse-on-gua? 300 416 gua0))
+  (check-false (mouse-on-gua? 301 186 gua0))
+  (check-false (mouse-on-gua? 99 186 gua0))
+  (check-false (mouse-on-gua? 100 184 gua0))
 
-  (check-false (mouse-on? 100 48 yao0))
-  (check-true (mouse-on? 100 80 yao0))
+  (check-false (mouse-on-gua? 100 48 yao0))
+  (check-true (mouse-on-gua? 100 80 yao0))
+  )
+
+(define/contract (get-bottom-y g)
+  (-> gua? real?)
+  (let* ([p (gua-posn g)]
+         [y (vector-ref p 1)])
+    (+ y
+       (/ (get-height g) 2))))
+(module+ test
+  (check-= (get-bottom-y gua0) 415 0.001)
+  )
+
+(define/contract (gua->yao-ys g)
+  (-> gua? (listof real?))
+  null
   )
