@@ -1,39 +1,38 @@
 #lang racket
 (require 2htdp/image
          2htdp/universe
-         "classes.rkt")
+         "render.rkt"
+         "mouse.rkt"
+         "gua.rkt")
 
-(define WIDTH 600)
-(define HEIGHT 600)
+(define WIDTH 1200)
+(define HEIGHT 800)
 (define CENTER-X (/ WIDTH 2))
 (define CENTER-Y (/ HEIGHT 2))
 (define BG-COLOR 'white)
 (define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
 (define YAO-WIDTH 200)
 (define YAO-HEIGHT (* YAO-WIDTH 0.15))
+(define YAO-COLOR 'cyan)
 
-(define GUA0 (new gua64% [width YAO-WIDTH]
-                        [gap-color BG-COLOR]
-                        [yao-color 'cyan]
-                        [x CENTER-X]
-                        [y CENTER-Y]
-                        [xiang '(1 1 0 0 0 1)]
-                        )
-  )
+(define GUA0 (guapic '(1 1 0 0 0 1)
+                     (vector CENTER-X CENTER-Y)
+                     YAO-WIDTH))
 
 (define (render gua)
-  (send gua render MTS)
+  (render/guapic gua MTS YAO-COLOR BG-COLOR)
   )
 
 (define (mouse-handler gua mx my me)
-  (cond
-    [(mouse=? me "button-down")
-     (let ([i (send gua mouse-on-yao? mx my)])
-       (if i
-           (send gua zhi i)
-           gua))]
-    [else gua]
-    )
+  (let ([n (mouse-on-yaopic-n? mx my gua)])
+    (if n
+        (cond
+          [(mouse=? me "button-down")
+           (struct-copy guapic gua [xiang (zhi-gua (guapic-xiang gua) n)])]
+          [else gua]
+          )
+        gua
+        ))
   )
 
 (big-bang GUA0
