@@ -52,3 +52,45 @@
   (check-equal? (yao-bian 0) 1)
   (check-equal? (yao-bian 1) 0)
   )
+
+(: zong-gua (-> Gua Gua))
+(define (zong-gua g)
+  (assert ((inst reverse Yao) g) gua?))
+(module+ test
+  (check-equal? (zong-gua '(0 0 0 0 1 0))
+                '(0 1 0 0 0 0))
+  )
+
+(: cuo-gua (-> Gua Gua))
+(define (cuo-gua g)
+  (assert (map yao-bian g) gua?))
+(module+ test
+  (check-equal? (cuo-gua '(1 0 1 1 1 0))
+                '(0 1 0 0 0 1))
+  (check-equal? (cuo-gua '(1 0 1))
+                '(0 1 0))
+  )
+
+(: jiao-gua (-> Gua64 Gua8))
+(define (jiao-gua g64)
+  (assert
+   (for/list ([i : Integer (in-list '(2 3 4))])
+     (assert (list-ref g64 i) yao?))
+   gua8?)
+  )
+(module+ test
+  (check-equal? (jiao-gua '(1 1 1 0 0 0))
+                '(1 0 0))
+  )
+
+(: hu-gua (-> Gua64 Gua8))
+(define (hu-gua g64)
+  '(1 0 1))
+
+(: jiaohu-gua (-> Gua64 Gua64))
+(define (jiaohu-gua g64)
+  g64)
+
+(: zhi-gua (-> Gua YaoPosn * Gua))
+(define (zhi-gua g . yp)
+  g)
