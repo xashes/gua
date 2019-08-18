@@ -2,6 +2,7 @@
 
 (require 2htdp/image
          2htdp/universe
+         "gua-info.rkt"
          "gua.rkt")
 
 (provide (contract-out [struct guapic
@@ -22,6 +23,7 @@
 ;; structs for render
 (struct guapic (xiang posn width) #:transparent)
 (struct yaopic guapic (color gap-color) #:transparent)
+
 (module+ test
   (require rackunit rackunit/text-ui)
 
@@ -182,7 +184,13 @@
                   (render/yaopic (yaopic xiang (vector 200 y) 200 'cyan 'white) bg)))
   )
 
-(require "gua-info.rkt")
-(define/contract (render/yao-ci g yao-n)
-  (define yc (get-yaoci g yao-n))
+(define/contract (yaoci->img gua yao-n font-size font-color)
+  (-> guapic? integer? (and/c integer? (between/c 1 255)) (or/c symbol? color?) image?)
+  (define yaoci (get-yaoci (guapic-xiang gua) yao-n))
+  (text yaoci font-size font-color)
+  )
+(module+ test
+  (check-equal? (yaoci->img guapic0 2 30 'black)
+                (text (get-yaoci (guapic-xiang guapic0) 2) 30 'black)
+                )
   )
