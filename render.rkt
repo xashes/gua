@@ -181,3 +181,8 @@
                            [y (in-list (guapic->yaopic-ys guapic0))])
                   (render/yaopic (yaopic xiang (vector 200 y) 200 'cyan 'white) bg)))
   )
+
+(require "gua-info.rkt")
+(define/contract (render/yao-ci g yao-n)
+  (define yc (get-yaoci g yao-n))
+  )

@@ -5,11 +5,11 @@
 
 (provide
  (contract-out
-  [gua-info (-> gua64? hash?)]
-  [gua-name (-> gua64? string?)]
-  [gua-xu (-> gua64? gua-xu-index?)]
-  [xu-gua (-> gua-xu-index? hash?)]
-  [gua-ci (-> gua64? string?)]
+  [get-guainfo (-> gua64? hash?)]
+  [get-guaname (-> gua64? string?)]
+  [get-guaxu (-> gua64? gua-xu-index?)]
+  [get-xugua (-> gua-xu-index? hash?)]
+  [get-guaci (-> gua64? string?)]
   ))
 
 
@@ -32,7 +32,7 @@
     (string->list s))))
 
 
-(define (gua-info gua)
+(define (get-guainfo gua)
   (list-ref
    (for/list
        ([g (in-list GUA64-INFO)]
@@ -42,15 +42,15 @@
      (hash-set g 'gua-xu idx))
    0))
 
-(define (gua-name gua)
-  (hash-ref (gua-info gua) 'gua-name)
+(define (get-guaname gua)
+  (hash-ref (get-guainfo gua) 'gua-name)
   )
 
-(define (gua-xu gua)
-  (hash-ref (gua-info gua) 'gua-xu)
+(define (get-guaxu gua)
+  (hash-ref (get-guainfo gua) 'gua-xu)
   )
 
-(define (xu-gua i)
+(define (get-xugua i)
   (list-ref GUA64-INFO (sub1 i))
   )
 
@@ -61,30 +61,30 @@
   (let ([meng '(0 1 0 0 0 1)]
         [xu '(1 1 1 0 1 0)]
         )
-    (check-equal? (gua-name meng) "蒙")
-    (check-equal? (gua-name xu) "需")
-    (check-equal? (gua-xu meng) 4)
-    (check-equal? (gua-xu xu) 5)
+    (check-equal? (get-guaname meng) "蒙")
+    (check-equal? (get-guaname xu) "需")
+    (check-equal? (get-guaxu meng) 4)
+    (check-equal? (get-guaxu xu) 5)
     )
 
   )
 
-(define (gua-ci gua)
-  (hash-ref (gua-info gua) 'gua-detail)
+(define (get-guaci gua)
+  (hash-ref (get-guainfo gua) 'gua-detail)
   )
 
 (module+ test
-  (check-equal? (gua-ci '(1 1 1 1 1 1))
+  (check-equal? (get-guaci '(1 1 1 1 1 1))
                 "元亨利贞。")
   )
 
-(provide (contract-out [yao-ci (-> gua64? nonnegative-integer? string?)]))
-(define (yao-ci gua yn)
-  (list-ref (hash-ref (gua-info gua) 'yao-detail) (sub1 yn))
+(provide (contract-out [get-yaoci (-> gua64? nonnegative-integer? string?)]))
+(define (get-yaoci gua yn)
+  (list-ref (hash-ref (get-guainfo gua) 'yao-detail) (sub1 yn))
   )
 (module+ test
-  (check-equal? (yao-ci '(1 1 1 1 1 1) 1)
+  (check-equal? (get-yaoci '(1 1 1 1 1 1) 1)
                 "潜龙勿用。")
-  (check-equal? (yao-ci '(1 1 1 1 1 1) 6)
+  (check-equal? (get-yaoci '(1 1 1 1 1 1) 6)
                 "亢龙有悔。")
   )
