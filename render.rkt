@@ -2,6 +2,7 @@
 
 (require 2htdp/image
          2htdp/universe
+         "gua-info.rkt"
          "gua.rkt")
 
 (provide (contract-out [struct guapic
@@ -182,7 +183,6 @@
                   (render/yaopic (yaopic xiang (vector 200 y) 200 'cyan 'white) bg)))
   )
 
-(require "gua-info.rkt")
-(define/contract (render/yao-ci g yao-n)
+(define/contract (render/yaoci g yao-n)
   (define yc (get-yaoci g yao-n))
   )
