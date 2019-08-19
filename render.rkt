@@ -4,6 +4,7 @@
          2htdp/universe
          "gua-info.rkt"
          "gua.rkt")
+(require "render-constants.rkt")
 
 (provide (contract-out [struct guapic
                          ([xiang gua?]
@@ -29,9 +30,7 @@
          render/textpic
          render/pic)
 
-(define YAO-COLOR 'cyan)
-(define GAP-COLOR 'white)
-(define YAOCI-COLOR 'black)
+(define GAP-COLOR BG-COLOR)
 
 ;; structs for render
 (struct guapic (xiang posn width) #:transparent)
@@ -217,12 +216,11 @@
                   (render/yaopic (yaopic xiang (vector 200 y) 200 YAO-COLOR GAP-COLOR) bg)))
   )
 
-(define/contract (make-yaoci-textpic gua yao-n [font-color YAOCI-COLOR])
+(define/contract (make-yaoci-textpic gua yao-n [font-size YAOCI-SIZE] [font-color YAOCI-COLOR])
   (->* (guapic? yao-posn?)
        ((or/c symbol? color?))
        textpic?)
   (define yaoci (get-yaoci (guapic-xiang gua) yao-n))
-  (define font-size (* (get-height gua 'yao) 4/5))
   (define-values (x y) (vector->values (guapic-posn (get-yaopic-n gua yao-n))))
   (textpic yaoci (vector x y) font-size font-color)
   )
@@ -230,9 +228,12 @@
   (check-equal? (make-yaoci-textpic guapic0 2)
                 (textpic (get-yaoci '(1 1 0 0 0 1) 2)
                          #(200 360)
-                         24
+                         YAOCI-SIZE
                          YAOCI-COLOR))
   )
+
+;; (define/contract (make-guaname-textic gua [font-size GUANAME-SIZE] [font-color GUANAME-COLOR])
+;;   )
 
 (define/contract (render/textpic tp bg)
   (-> textpic? image? image?)
@@ -244,7 +245,7 @@
                bg))
 (module+ test
   (check-equal? (render/textpic (make-yaoci-textpic guapic0 4) MTS)
-                (place-image (text (get-yaoci '(1 1 0 0 0 1) 4) 24 YAOCI-COLOR)
+                (place-image (text (get-yaoci '(1 1 0 0 0 1) 4) YAOCI-SIZE YAOCI-COLOR)
                              200 280
                              MTS))
   )

@@ -3,22 +3,8 @@
          2htdp/universe
          "render.rkt"
          "mouse.rkt"
-         "gua.rkt")
-(provide WIDTH
-         HEIGHT
-         BG-COLOR
-         YAO-COLOR)
-
-(define WIDTH 1200)
-(define HEIGHT 800)
-(define CENTER-X (/ WIDTH 2))
-(define CENTER-Y (/ HEIGHT 2))
-(define BG-COLOR 'white)
-(define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
-(define YAO-WIDTH 200)
-(define YAO-HEIGHT (* YAO-WIDTH 0.15))
-(define YAO-COLOR 'cyan)
-(define YAOCI-COLOR 'black)
+         "gua.rkt"
+         "render-constants.rkt")
 
 (struct worldstate (gua yaoci) #:transparent #:mutable)
 
@@ -45,17 +31,22 @@
            (let ([new-gua (struct-copy guapic gua [xiang (zhi-gua (guapic-xiang gua) n)])])
              (worldstate
               new-gua
-              (make-yaoci-textpic new-gua n YAOCI-COLOR)))]
+              (make-yaoci-textpic new-gua n)))]
           [(mouse=? me "move")
            (worldstate
             gua
-            (make-yaoci-textpic gua n YAOCI-COLOR))]
+            (make-yaoci-textpic gua n))]
           [else ws]
           )
         (worldstate
          gua
          #f)
         ))
+  )
+
+(define/contract (tick ws)
+  (-> worldstate? worldstate?)
+  ws
   )
 
 (module+ main
