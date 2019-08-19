@@ -216,19 +216,13 @@
                   (render/yaopic (yaopic xiang (vector 200 y) 200 YAO-COLOR GAP-COLOR) bg)))
   )
 
-<<<<<<< HEAD
-(define/contract (render/yaoci g yao-n)
-  (define yc (get-yaoci g yao-n))
-=======
 (define/contract (make-yaoci-textpic gua yao-n [font-size YAOCI-SIZE] [font-color YAOCI-COLOR])
   (->* (guapic? yao-posn?)
        ((or/c symbol? color?))
        textpic?)
   (define yaoci (get-yaoci (guapic-xiang gua) yao-n))
   (define-values (x y) (vector->values (guapic-posn (get-yaopic-n gua yao-n))))
-  (textpic yaoci (vector x y) font-size font-color)
->>>>>>> 380059c12a00e685013fe8e0fa7f5441ef26061b
-  )
+  (textpic yaoci (vector x y) font-size font-color))
 (module+ test
   (check-equal? (make-yaoci-textpic guapic0 2)
                 (textpic (get-yaoci '(1 1 0 0 0 1) 2)
