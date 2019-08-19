@@ -16,6 +16,6 @@
 (define YAOCI-SIZE (* YAO-HEIGHT 4/5))
 (define YAOCI-COLOR 'black)
 (define GUANAME-SIZE (* YAO-HEIGHT 8))
-(define GUANAME-COLOR 'black)
-(define GUACI-SIZE (* YAO-HEIGHT 1.2))
+(define GUANAME-COLOR (color 0 255 255 160))
+(define GUACI-SIZE (* YAO-HEIGHT 1))
 (define GUACI-COLOR 'black)
