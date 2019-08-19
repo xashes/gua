@@ -7,6 +7,7 @@
   [gua? (-> (listof integer?) boolean?)]
   [gua8? (-> (listof integer?) boolean?)]
   [gua64? (-> (listof integer?) boolean?)]
+  [yao-posn? (-> integer? boolean?)]
   [yao-bian (-> yao? yao?)]
   [zong-gua (-> gua? gua?)]
   [cuo-gua (-> gua? gua?)]
