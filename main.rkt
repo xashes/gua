@@ -6,12 +6,13 @@
          "gua.rkt"
          "render-constants.rkt")
 
-(struct worldstate (gua guaname yaoci) #:transparent #:mutable)
+(struct worldstate (gua guaname guaci yaoci) #:transparent #:mutable)
 
 
 (define (make-worldstate gp [yao-n #f])
   (worldstate gp
               (make-guaname-textpic gp)
+              (make-guaci-textpic gp)
               (if yao-n
                   (make-yaoci-textpic gp yao-n)
                   #f))

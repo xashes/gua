@@ -28,6 +28,7 @@
          guapic->yaopic-list
          make-yaoci-textpic
          make-guaname-textpic
+         make-guaci-textpic
          render/textpic
          render/pic)
 
@@ -243,8 +244,8 @@
        textpic?)
   (define gname (get-guaname (guapic-xiang gua)))
   (define img (text gname font-size font-color))
-  (define x (- BG-WIDTH (* (image-width img) 3/5)))
-  (define y (- BG-HEIGHT (* (image-height img) 3/5)))
+  (define x (- BG-WIDTH (* (image-width img) 1/2)))
+  (define y (- BG-HEIGHT (* (image-height img) 1/2)))
   (textpic gname (vector x y) font-size GUANAME-COLOR)
   )
 (module+ test
@@ -254,11 +255,24 @@
                   (textpic gn
                            (vector
                             (- BG-WIDTH
-                               (* (image-width img) 3/5))
+                               (* (image-width img) 1/2))
                             (- BG-HEIGHT
-                               (* (image-height img) 3/5)))
+                               (* (image-height img) 1/2)))
                            GUANAME-SIZE
                            GUANAME-COLOR)))
+  )
+
+(define/contract (make-guaci-textpic gua [font-size GUACI-SIZE] [font-color GUACI-COLOR])
+  (->* (guapic?)
+       ((and/c integer? (between/c 1 255))
+        (or/c symbol? color?))
+       textpic?)
+  (define guaci (get-guaci (guapic-xiang gua)))
+  (define img (text guaci font-size font-color))
+  (define x (* (image-width img) 1/2))
+  (define y (- BG-HEIGHT
+               (* (image-height img) 1/2)))
+  (textpic guaci (vector x y) font-size font-color)
   )
 
 (define/contract (render/textpic tp bg)
