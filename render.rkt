@@ -30,7 +30,8 @@
          make-guaname-textpic
          make-guaci-textpic
          render/textpic
-         render/pic)
+         render/pic
+         make-zonggua)
 
 (define GAP-COLOR BG-COLOR)
 
@@ -52,6 +53,15 @@
                     GAP-COLOR))
   (define yaopic1 (struct-copy yaopic yaopic0 [xiang #:parent guapic 1]))
   )
+
+(define/contract (make-zonggua gua)
+  (-> guapic? guapic?)
+  (define-values (_ xiang posn width) (vector->values (struct->vector gua)))
+  (define-values (gx gy) (vector->values posn))
+  (define x (- gx (* width 5/3)))
+  (guapic (zong-gua xiang) (vector x gy) width)
+  )
+;; TODO test
 
 ;; private
 (define/contract (get-yaopic-height w)
