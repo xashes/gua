@@ -6,12 +6,21 @@
          "gua.rkt"
          "render-constants.rkt")
 
-(struct worldstate (gua yaoci) #:transparent #:mutable)
+(struct worldstate (gua guaname yaoci) #:transparent #:mutable)
 
-(define WS0 (worldstate (guapic '(1 1 0 0 0 1)
-                                (vector CENTER-X CENTER-Y)
-                                YAO-WIDTH)
-                        null))
+
+(define (make-worldstate gp [yao-n #f])
+  (worldstate gp
+              (make-guaname-textpic gp)
+              (if yao-n
+                  (make-yaoci-textpic gp yao-n)
+                  #f))
+  )
+
+(define WS0 (make-worldstate (guapic '(1 1 0 0 0 1)
+                                     (vector CENTER-X CENTER-Y)
+                                     YAO-WIDTH)))
+
 (require racket/struct)
 
 (define (render ws)
@@ -22,25 +31,18 @@
   )
 
 (define (mouse-handler ws mx my me)
-  (define-values (_ gua yaoci)
-    (vector->values (struct->vector ws)))
+  (define gua (worldstate-gua ws))
   (let ([n (mouse-on-yaopic-n? mx my gua)])
     (if n
         (cond
           [(mouse=? me "button-down")
            (let ([new-gua (struct-copy guapic gua [xiang (zhi-gua (guapic-xiang gua) n)])])
-             (worldstate
-              new-gua
-              (make-yaoci-textpic new-gua n)))]
+             (make-worldstate new-gua n))]
           [(mouse=? me "move")
-           (worldstate
-            gua
-            (make-yaoci-textpic gua n))]
+           (make-worldstate gua n)]
           [else ws]
           )
-        (worldstate
-         gua
-         #f)
+        (make-worldstate gua #f)
         ))
   )
 
@@ -49,10 +51,7 @@
   ws
   )
 
-(module+ main
-
-  (big-bang WS0
-            [to-draw render]
-            [on-mouse mouse-handler]
-            )
-  )
+(big-bang WS0
+          [to-draw render]
+          [on-mouse mouse-handler]
+          )

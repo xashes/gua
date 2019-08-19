@@ -27,6 +27,7 @@
          get-edges/guapic
          guapic->yaopic-list
          make-yaoci-textpic
+         make-guaname-textpic
          render/textpic
          render/pic)
 
@@ -224,6 +225,10 @@
   (define-values (x y) (vector->values (guapic-posn (get-yaopic-n gua yao-n))))
   (textpic yaoci (vector x y) font-size font-color))
 (module+ test
+  (define yaoci-pic0 (textpic (get-yaoci '(1 1 0 0 0 1) 6)
+                             #(200 200)
+                             YAOCI-SIZE
+                             YAOCI-COLOR))
   (check-equal? (make-yaoci-textpic guapic0 2)
                 (textpic (get-yaoci '(1 1 0 0 0 1) 2)
                          #(200 360)
@@ -231,8 +236,30 @@
                          YAOCI-COLOR))
   )
 
-;; (define/contract (make-guaname-textic gua [font-size GUANAME-SIZE] [font-color GUANAME-COLOR])
-;;   )
+(define/contract (make-guaname-textpic gua [font-size GUANAME-SIZE] [font-color GUANAME-COLOR])
+  (->* (guapic?)
+       ((and/c integer? (between/c 1 255))
+        (or/c symbol? color?))
+       textpic?)
+  (define gname (get-guaname (guapic-xiang gua)))
+  (define img (text gname font-size font-color))
+  (define x (- BG-WIDTH (* (image-width img) 3/5)))
+  (define y (- BG-HEIGHT (* (image-height img) 3/5)))
+  (textpic gname (vector x y) font-size GUANAME-COLOR)
+  )
+(module+ test
+  (check-equal? (make-guaname-textpic guapic0)
+                (let* ([gn (get-guaname (guapic-xiang guapic0))]
+                       [img (text gn GUANAME-SIZE GUANAME-COLOR)])
+                  (textpic gn
+                           (vector
+                            (- BG-WIDTH
+                               (* (image-width img) 3/5))
+                            (- BG-HEIGHT
+                               (* (image-height img) 3/5)))
+                           GUANAME-SIZE
+                           GUANAME-COLOR)))
+  )
 
 (define/contract (render/textpic tp bg)
   (-> textpic? image? image?)
@@ -250,7 +277,7 @@
   )
 
 (define/contract (render/pic pic bg)
-  (-> any/c image? image?)
+  (-> (or/c #f guapic? textpic?) image? image?)
   (cond
     [(guapic? pic)
      (render/guapic pic bg)]
@@ -258,3 +285,10 @@
      (render/textpic pic bg)]
     [else bg]
     ))
+(module+ test
+  (check-equal? (render/pic #f MTS) MTS)
+  (check-equal? (render/pic guapic0 MTS)
+                (render/guapic guapic0 MTS))
+  (check-equal? (render/pic yaoci-pic0 MTS)
+                (render/textpic yaoci-pic0 MTS))
+  )
