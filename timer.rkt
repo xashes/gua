@@ -13,7 +13,8 @@
 (define MTS (empty-scene WIDTH HEIGHT BG-COLOR))
 
 (define START-TIME (current-seconds))
-(define TIME-RATE 1/28)
+(define TIME-RATE 1/60)
+(define STATUS 'stop)
 
 (module+ test
   (require rackunit rackunit/text-ui)
@@ -56,7 +57,12 @@
 ;; WS ::= real?
 (define/contract (tick ws)
   (-> real? real?)
-  (add1 ws)
+  (match STATUS
+    ['stop ws]
+    ['pause ws]
+    ['normal (add1 ws)]
+    ['reset 0]
+    )
   )
 
 (define/contract (timer->image ws)
@@ -71,11 +77,24 @@
                MTS)
   )
 
+(define/contract (key-handler ws ke)
+  (-> real? key-event? real?)
+  (cond
+    [(key=? ke "r") (set! STATUS 'reset)]
+    [(key=? ke "p") (set! STATUS 'pause)]
+    [(key=? ke "s") (set! STATUS 'stop)]
+    [(key=? ke " ") (set! STATUS 'normal)]
+    )
+  ws
+  )
+
 (define/contract (timer ws)
   (-> real? real?)
   (big-bang ws
             [to-draw render/timer]
-            [on-tick tick])
+            [on-tick tick TIME-RATE]
+            [on-key key-handler]
+            )
   )
 
 (module+ main
