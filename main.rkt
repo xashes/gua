@@ -6,6 +6,8 @@
          "gua.rkt"
          "render-constants.rkt")
 
+;; 4 pics
+;; 如果位置固定，是否只要卦象和指定爻就可以了
 (struct worldstate (gua guaname guaci yaoci) #:transparent #:mutable)
 
 
@@ -45,6 +47,12 @@
           )
         (make-worldstate gua #f)
         ))
+  )
+
+;; use key to change gua to cuo-gua or zong-gua
+(define/contract (key-handler ws ke)
+  (-> worldstate? key-event? worldstate?)
+  ws
   )
 
 (define/contract (tick ws)

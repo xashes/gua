@@ -228,6 +228,8 @@
                   (render/yaopic (yaopic xiang (vector 200 y) 200 YAO-COLOR GAP-COLOR) bg)))
   )
 
+
+
 (define/contract (make-yaoci-textpic gua yao-n [font-size YAOCI-SIZE] [font-color YAOCI-COLOR])
   (->* (guapic? yao-posn?)
        ((or/c symbol? color?))
